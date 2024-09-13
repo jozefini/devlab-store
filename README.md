@@ -76,17 +76,13 @@ function YourComponent() {
 
 ### 2. Non-subscribed Helpers
 
-## get
+## get()
 
 Retrieves a value from the store.
 
-typescript
-
-Copy
-
 `const userName = globalStore.get('user.name') // userName is 'John'`
 
-## set
+## set()
 
 Sets a value in the store.
 
@@ -94,7 +90,7 @@ Sets a value in the store.
 globalStore.set('user.name', 'Jane') // user.name is now 'Jane'
 ```
 
-## update
+## update()
 
 Updates a value in the store using the current value.
 
@@ -102,7 +98,7 @@ Updates a value in the store using the current value.
 globalStore.update('user.age', (prevAge) => prevAge + 1) // user.age is now 31
 ```
 
-## remove
+## remove()
 
 Removes a value from the store.
 
@@ -110,7 +106,7 @@ Removes a value from the store.
 globalStore.remove('user.age') // user.age is now undefined
 ```
 
-## reset
+## reset()
 
 Resets the entire store to its initial state.
 
@@ -120,7 +116,7 @@ globalStore.reset() // Store is reset to initial values
 
 ### 3. Subscribed Helper
 
-## use
+## use()
 
 Creates a reactive subscription to a specific path in the store.
 
