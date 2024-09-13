@@ -1,5 +1,11 @@
 # appcode
 
+## 1.0.1
+
+### Patch Changes
+
+- init
+
 ## 1.0.15
 
 ### Patch Changes
