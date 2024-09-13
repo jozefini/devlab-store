@@ -1,5 +1,5 @@
 {
-  "name": "devlab",
+  "name": "@devlab/store",
   "license": "MIT",
   "version": "1.0.1",
   "description": "Optimized React Store",
