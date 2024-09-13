@@ -7,7 +7,7 @@ import {
   useSyncExternalStore,
 } from 'react'
 
-export function deepClone<T>(obj: T): T {
+function deepClone<T>(obj: T): T {
   if (obj === null || typeof obj !== 'object') {
     return obj
   }
@@ -70,7 +70,7 @@ type PropertyCache = {
   initialProp: any
 }
 
-class CreateStateStore<T> {
+class CreateStore<T> {
   // Data
   private data: T
   private initialData: T
@@ -329,22 +329,22 @@ class CreateStateStore<T> {
 // =====================
 // Global Store
 // =====================
-export function createStateStore<T>(props: ConstructorProps<T>) {
-  return new CreateStateStore<T>(props)
+export function createStore<T>(props: ConstructorProps<T>) {
+  return new CreateStore<T>(props)
 }
 
 // =====================
 // Context Store
 // =====================
 export function createScopedStore<T>(props: ConstructorProps<T>) {
-  const StoreContext = createContext<CreateStateStore<T> | null>(null)
+  const StoreContext = createContext<CreateStore<T> | null>(null)
   const Provider: FC<{ children: React.ReactNode }> = ({ children }) => {
-    const store = useMemo(() => new CreateStateStore<T>(props), [])
+    const store = useMemo(() => new CreateStore<T>(props), [])
     return (
       <StoreContext.Provider value={store}>{children}</StoreContext.Provider>
     )
   }
-  function useStore(): CreateStateStore<T> {
+  function useStore(): CreateStore<T> {
     const context = useContext(StoreContext)
     if (!context) {
       throw new Error('useStore must be used within a StoreProvider')

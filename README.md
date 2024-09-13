@@ -20,9 +20,9 @@ This is a custom state management store for React applications. It provides both
 ## Global Store
 
 ```typescript
-import { createStateStore } from './objectStore'
+import { createStore } from '@devlab/store'
 
-const globalStore = createStateStore<{
+const globalStore = createStore<{
   user: { name: string; age: number }
   settings: { theme: string }
 }>({
@@ -40,9 +40,9 @@ const globalStore = createStateStore<{
 ## Context Store
 
 ```typescript
-import { createContextStateStore } from './stateStore';
+import { createScopedStore } from '@devlab/store';
 
-const { Provider, useStore } = createContextStateStore<{
+const { Provider, useStore } = createScopedStore<{
   user: { name: string; age: number };
   settings: { theme: string };
 }>({
@@ -99,7 +99,7 @@ globalStore.set('user.name', 'Jane') // user.name is now 'Jane'
 Updates a value in the store using the current value.
 
 ```typescript
-globalStore.update('user.age', prevAge => prevAge + 1) // user.age is now 31
+globalStore.update('user.age', (prevAge) => prevAge + 1) // user.age is now 31
 ```
 
 ## remove
@@ -145,7 +145,7 @@ Update nested properties using dot notation.
 
 ```typescript
 globalStore.set('settings.theme', 'dark') // settings.theme is now 'dark'
-globalStore.update('user', prevUser => ({
+globalStore.update('user', (prevUser) => ({
   ...prevUser,
   age: prevUser.age + 1,
 })) // user.age is now incremented
