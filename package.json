@@ -1,7 +1,7 @@
 {
   "name": "@devlab/store",
   "license": "MIT",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Optimized React Store",
   "publishConfig": {
     "access": "public"
@@ -35,7 +35,7 @@
     "typescript": "^5.3.3"
   },
   "bugs": {
-    "url": "https://github.com/jozefini/lowkit/issues"
+    "url": "https://github.com/DevLabBase/store/issues"
   },
-  "homepage": "https://github.com/jozefini/lowkit#readme"
+  "homepage": "https://github.com/DevLabBase/store#readme"
 }

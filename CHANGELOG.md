@@ -1,5 +1,11 @@
 # appcode
 
+## 1.0.2
+
+### Patch Changes
+
+- fix package json links
+
 ## 1.0.1
 
 ### Patch Changes
