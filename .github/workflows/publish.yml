@@ -1,0 +1,38 @@
+name: Publish
+on:
+  push:
+    branches:
+      - 'main'
+      - 'stage'
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+          cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm run build
+
+      - name: Release
+        run: pnpm run release
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

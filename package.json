@@ -1,0 +1,41 @@
+{
+  "name": "devlab",
+  "license": "MIT",
+  "version": "1.0.0",
+  "description": "Optimized React Store",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "react",
+    "library"
+  ],
+  "author": "DevLab",
+  "repository": {
+    "url": "git+https://github.com/DevLabBase/store.git"
+  },
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup",
+    "lint": "tsc",
+    "release": "pnpm run build && pnpm publish --no-git-checks --access public --no-git-checks"
+  },
+  "peerDependencies": {
+    "react": "^18.2.73"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.1",
+    "@types/node": "^22.5.0",
+    "@types/react": "^18.2.73",
+    "prettier": "^3.2.4",
+    "react": "^18.2.0",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3"
+  },
+  "bugs": {
+    "url": "https://github.com/jozefini/lowkit/issues"
+  },
+  "homepage": "https://github.com/jozefini/lowkit#readme"
+}
