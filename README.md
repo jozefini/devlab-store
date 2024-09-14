@@ -22,7 +22,7 @@ This is a custom state management store for React applications. It provides both
 ```typescript
 import { createStore } from '@devlab/store'
 
-const globalStore = createStore<{
+const siteStore = createStore<{
   user: { name: string; age: number }
   settings: { theme: string }
 }>({
@@ -47,12 +47,12 @@ const { Provider, useStore } = createScopedStore<{
   settings: { theme: string };
 }>({
   initialData: {
-    user: { name: 'John', age: 30 },
-    settings: { theme: 'light' },
+    name: 'John',
+    age: 30,
   },
   fallbackData: {
-    user: { name: 'Guest', age: 0 },
-    settings: { theme: 'default' },
+    name: '',
+    age: 0,
   },
 });
 
@@ -60,50 +60,61 @@ const { Provider, useStore } = createScopedStore<{
 
 function App() {
   return (
-    <Provider>
-      <YourComponents />
-    </Provider>
+    <>
+      <Header />
+
+      <Provider>
+        <UserProfile />
+      </Provider>
+
+      <Footer />
+    </>
   );
 }
 
 // Usage in components:
 
-function YourComponent() {
+function UserProfile() {
   const store = useStore();
-  // Use the store...
+
+  // Use the store
+  const userName = store.use('name');
+  const userAge = store.use('age')
+
+  return (...)
 }
 ```
 
 ### 2. Non-subscribed Helpers
 
-## get()
+## get(path: string)
 
 Retrieves a value from the store.
 
-`const userName = globalStore.get('user.name') // userName is 'John'`
+`const userName = siteStore.get('user.name') // userName is 'John'`
 
-## set()
+## set(path: string, value: T, notify?: boolean)
 
 Sets a value in the store.
 
 ```typescript
-globalStore.set('user.name', 'Jane') // user.name is now 'Jane'
+siteStore.set('user.name', 'Jane') // user.name is now 'Jane'
 ```
 
-## update()
+## update(path: string, value: T | Function, notify?: boolean)
 
 Updates a value in the store using the current value.
 
 ```typescript
-globalStore.update('user.age', (prevAge) => prevAge + 1) // user.age is now 31
+siteStore.update('user.age', (prevAge) => prevAge + 1) // user.age is now 31
 ```
 
-## remove()
+## remove(path: string, notify?: boolean)
 
 Removes a value from the store.
 
 ```typescript
-globalStore.remove('user.age') // user.age is now undefined
+siteStore.remove('user.age') // user.age is now undefined
 ```
 
 ## reset()
@@ -111,18 +122,18 @@ globalStore.remove('user.age') // user.age is now undefined
 Resets the entire store to its initial state.
 
 ```typescript
-globalStore.reset() // Store is reset to initial values
+siteStore.reset() // Store is reset to initial values
 ```
 
 ### 3. Subscribed Helper
 
-## use()
+## use(path: string)
 
 Creates a reactive subscription to a specific path in the store.
 
 ```typescript
 function UserName() {
-  const userName = globalStore.use('user.name');
+  const userName = siteStore.use('user.name');
   return <div>{userName}</div>;
 }
 ```
@@ -132,7 +143,7 @@ function UserName() {
 Access nested properties using dot notation.
 
 ```typescript
-const theme = globalStore.get('settings.theme') // theme is 'light'
+const theme = siteStore.get('settings.theme') // theme is 'light'
 ```
 
 ### 5. Deep Update
@@ -140,8 +151,8 @@ const theme = globalStore.get('settings.theme') // theme is 'light'
 Update nested properties using dot notation.
 
 ```typescript
-globalStore.set('settings.theme', 'dark') // settings.theme is now 'dark'
-globalStore.update('user', (prevUser) => ({
+siteStore.set('settings.theme', 'dark') // settings.theme is now 'dark'
+siteStore.update('user', (prevUser) => ({
   ...prevUser,
   age: prevUser.age + 1,
 })) // user.age is now incremented
@@ -153,7 +164,7 @@ Create reactive subscriptions to deeply nested properties.
 
 ```typescript
 function UserAge() {
-  const userAge = globalStore.use('user.age');
+  const userAge = siteStore.use('user.age');
   return <div>Age: {userAge}</div>;
 } // Component re-renders when user.age changes
 ```

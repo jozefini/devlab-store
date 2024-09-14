@@ -1,7 +1,7 @@
 {
   "name": "@devlab/store",
   "license": "MIT",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Optimized React Store",
   "publishConfig": {
     "access": "public"

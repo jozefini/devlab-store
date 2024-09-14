@@ -11,6 +11,9 @@ function deepClone<T>(obj: T): T {
   if (obj === null || typeof obj !== 'object') {
     return obj
   }
+  if (obj instanceof Date) {
+    return new Date(obj.getTime()) as unknown as T
+  }
   if (Array.isArray(obj)) {
     return obj.map(deepClone) as unknown as T
   }
@@ -22,9 +25,19 @@ function deepClone<T>(obj: T): T {
       ])
     ) as unknown as T
   }
-  return Object.fromEntries(
-    Object.entries(obj).map(([key, value]) => [key, deepClone(value)])
-  ) as T
+  if (obj instanceof Set) {
+    return new Set(Array.from(obj).map(deepClone)) as unknown as T
+  }
+  if (obj instanceof RegExp) {
+    return new RegExp(obj.source, obj.flags) as unknown as T
+  }
+  const clonedObj: Record<string, any> = {}
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      clonedObj[key] = deepClone((obj as Record<string, any>)[key])
+    }
+  }
+  return clonedObj as T
 }
 
 type NestedPartial<T> = {
