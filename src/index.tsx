@@ -340,6 +340,11 @@ class CreateStore<T> {
 }
 
 // =====================
+// Instance Type
+// =====================
+export type StoreInstance<T> = CreateStore<T>
+
+// =====================
 // Global Store
 // =====================
 export function createStore<T>(props: ConstructorProps<T>) {
