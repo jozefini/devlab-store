@@ -12,7 +12,7 @@
   ],
   "author": "DevLab",
   "repository": {
-    "url": "git+https://github.com/DevLabBase/store.git"
+    "url": "git+https://github.com/jozefini/devlab-store.git"
   },
   "main": "./index.js",
   "types": "./index.d.ts",
@@ -35,7 +35,7 @@
     "typescript": "^5.3.3"
   },
   "bugs": {
-    "url": "https://github.com/DevLabBase/store/issues"
+    "url": "https://github.com/jozefini/devlab-store/issues"
   },
-  "homepage": "https://github.com/DevLabBase/store#readme"
+  "homepage": "https://github.com/jozefini/devlab-store#readme"
 }
