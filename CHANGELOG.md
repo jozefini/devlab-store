@@ -1,5 +1,11 @@
 # appcode
 
+## 1.1.0
+
+### Minor Changes
+
+- Add Map Store
+
 ## 1.0.6
 
 ### Patch Changes
