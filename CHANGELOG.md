@@ -1,5 +1,11 @@
 # appcode
 
+## 1.1.1
+
+### Patch Changes
+
+- add remove and clear methods
+
 ## 1.1.0
 
 ### Minor Changes

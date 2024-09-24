@@ -272,6 +272,28 @@ class CreateMapStore<T> {
     return useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
   }
 
+  reset(notify: boolean = true): void {
+    this.data = deepClone(this.initialData)
+
+    if (notify) {
+      this.subscribers.forEach((_, path) => {
+        this.notifySubscribers(path)
+      })
+      this.notifyCountSubscribers()
+    }
+  }
+
+  clear(notify: boolean = true): void {
+    this.data.clear()
+
+    if (notify) {
+      this.subscribers.forEach((_, path) => {
+        this.notifySubscribers(path)
+      })
+      this.notifyCountSubscribers()
+    }
+  }
+
   private get<P extends Paths<T>>(mapKey: string, path?: P): PathValue<T, P> {
     const fullPath = this.getFullPath(mapKey, path)
     const { currentKey } = this.getCachedPath(fullPath)
