@@ -14,6 +14,7 @@ type NestedPartial<T> = {
 type ConstructorProps<T> = {
   initialData?: Map<string, T>
   fallbackData?: NestedPartial<T>
+  devTools?: string
 }
 
 type Join<K, P> = K extends string | number
@@ -53,6 +54,12 @@ type PropertyCache = {
   initialProp: any
 }
 
+type DevToolsConnection = {
+  init: (state: any) => void
+  send: (action: { type: string }, state: any) => void
+  subscribe: (listener: (message: any) => void) => void
+}
+
 class CreateMapStore<T> {
   // Data
   private data: Map<string, T>
@@ -68,19 +75,118 @@ class CreateMapStore<T> {
   private sizeSubscribers: Set<() => void> = new Set()
   // Keys
   private cachedKeys: string[] = []
+  // Devtools
+  private devTools: DevToolsConnection | null = null
+  private pauseDevTools = false
 
-  constructor({ initialData, fallbackData }: ConstructorProps<T>) {
+  constructor({ initialData, fallbackData, devTools }: ConstructorProps<T>) {
     this.data =
       (deepClone(initialData) as unknown as Map<string, T>) || new Map()
     this.initialData =
       (deepClone(initialData) as unknown as Map<string, T>) || new Map()
     this.fallbackData = deepClone(fallbackData || {}) as T
     this.notifyCountSubscribers()
+
+    // Devtools
+    if (devTools) {
+      this.setupDevTools(devTools)
+    }
+  }
+
+  // ======Q===============
+  // Devtools
+  // =====================
+
+  private setupDevTools(name: string) {
+    if (typeof window === 'undefined') return
+
+    const devToolsExtension = (window as any).__REDUX_DEVTOOLS_EXTENSION__
+    if (!devToolsExtension) return
+
+    const devTools = devToolsExtension.connect({
+      name,
+      features: {
+        jump: true,
+        skip: true,
+        reorder: true,
+        dispatch: true,
+        persist: true,
+      },
+      maxAge: 50, // Limit the number of stored actions
+    })
+    this.devTools = devTools
+
+    devTools.init(this.serializeState())
+
+    devTools.subscribe((message: any) => {
+      this.handleDevToolsMessage(message)
+    })
+  }
+
+  private serializeState(): Record<string, T> {
+    return Object.fromEntries(this.data)
+  }
+
+  private handleDevToolsMessage(message: any) {
+    if (message.type === 'DISPATCH') {
+      switch (message.payload.type) {
+        case 'JUMP_TO_ACTION':
+        case 'JUMP_TO_STATE':
+          try {
+            const state = JSON.parse(message.state)
+            this.applyDevToolsState(state)
+          } catch (error) {
+            console.error('Failed to parse jump state:', error)
+          }
+          break
+        case 'RESET':
+          this.reset(true)
+          break
+      }
+    } else if (message.type === 'ACTION') {
+      try {
+        const action = JSON.parse(message.payload)
+        // Handle custom actions if needed
+      } catch (error) {
+        console.error('Failed to parse action:', error)
+      }
+    }
+  }
+
+  private applyDevToolsState(state: Record<string, T>) {
+    this.pauseDevTools = true
+    this.data = new Map(Object.entries(state))
+    this.notifyAllSubscribers()
+    this.pauseDevTools = false
+  }
+
+  private sendToDevTools(
+    action: string,
+    key: string,
+    path?: string,
+    value?: any
+  ) {
+    if (!this.devTools || this.pauseDevTools) return
+
+    const actionPayload = {
+      type: `${action} ${key}${path ? `.${path}` : ''}`,
+      key,
+      path,
+      value,
+    }
+    this.devTools.send(actionPayload, this.serializeState())
   }
 
   // =====================
   // Subscribers
   // =====================
+
+  private notifyAllSubscribers() {
+    this.subscribers.forEach((_, path) => {
+      this.notifySubscribers(path)
+    })
+    this.notifyCountSubscribers()
+  }
 
   private notifySubscribers(path: string) {
     const subscribers = this.subscribers.get(path)
@@ -276,6 +382,7 @@ class CreateMapStore<T> {
   reset(notify: boolean = true): void {
     this.data = deepClone(this.initialData)
 
+    this.sendToDevTools('RESET', '')
     if (notify) {
       this.subscribers.forEach((_, path) => {
         this.notifySubscribers(path)
@@ -287,6 +394,7 @@ class CreateMapStore<T> {
   clear(notify: boolean = true): void {
     this.data.clear()
 
+    this.sendToDevTools('CLEAR', '')
     if (notify) {
       this.subscribers.forEach((_, path) => {
         this.notifySubscribers(path)
@@ -315,6 +423,7 @@ class CreateMapStore<T> {
     const fullPath = this.getFullPath(mapKey)
     this.data.set(mapKey, value)
 
+    this.sendToDevTools('SET', mapKey, undefined, value)
     if (notify) {
       this.notifyNestedSubscribers(fullPath)
       this.notifyDependencies(fullPath)
@@ -349,6 +458,12 @@ class CreateMapStore<T> {
       parentProp[currentKey] = value
     }
 
+    this.sendToDevTools(
+      'UPDATE',
+      mapKey,
+      path as string,
+      parentProp[currentKey]
+    )
     if (notify) {
       this.notifyNestedSubscribers(fullPath)
       this.notifyDependencies(fullPath)
@@ -361,6 +476,7 @@ class CreateMapStore<T> {
     }
     this.data.delete(mapKey)
 
+    this.sendToDevTools('REMOVE', mapKey)
     if (notify) {
       this.notifyNestedSubscribers(mapKey)
       this.notifyDependencies(mapKey)

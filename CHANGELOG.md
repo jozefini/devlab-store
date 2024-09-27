@@ -1,5 +1,11 @@
 # appcode
 
+## 1.1.3
+
+### Patch Changes
+
+- add redux devtools
+
 ## 1.1.2
 
 ### Patch Changes
