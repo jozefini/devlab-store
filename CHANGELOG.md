@@ -1,5 +1,11 @@
 # appcode
 
+## 1.1.2
+
+### Patch Changes
+
+- fix initial map count
+
 ## 1.1.1
 
 ### Patch Changes

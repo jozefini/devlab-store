@@ -75,6 +75,7 @@ class CreateMapStore<T> {
     this.initialData =
       (deepClone(initialData) as unknown as Map<string, T>) || new Map()
     this.fallbackData = deepClone(fallbackData || {}) as T
+    this.notifyCountSubscribers()
   }
 
   // =====================
